@@ -25,7 +25,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
     
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', process.env.CLOUDINARY_PRESET_KEY);
+    formData.append('upload_preset', 'u5cfnoki');
     
     try {
       const response = await fetch(apiUrl, {
