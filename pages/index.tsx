@@ -15,30 +15,31 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
   const router = useRouter()
   const { photoId } = router.query
   const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedPhoto()
-
+  
   const lastViewedPhotoRef = useRef<HTMLAnchorElement>(null)
   const [uploadedResponses, setUploadedResponses] = useState<Response[]>([]);
-
+  
   
   const uploadPhoto = async (file: File) => {
-      const apiUrl = 'https://api.cloudinary.com/v1_1/dxkvwzjs3/image/upload'; // Replace with your actual API endpoint URL
+    const apiUrl = 'https://api.cloudinary.com/v1_1/dxkvwzjs3/image/upload'; // Replace with your actual API endpoint URL
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', process.env.CLOUDINARY_PRESET_KEY);
+    
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        body: formData,
+      });
+      console.log("form data", formData)
       
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', process.env.CLOUDINARY_PRESET_KEY);
+      if (!response.ok) {
+        alert('Failed to upload photo');
+      }
       
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          body: formData,
-        });
-        console.log("form data", formData)
-        
-        if (!response.ok) {
-          alert('Failed to upload photo');
-        }
-        
-        const responseData = await response.json();
+      const responseData = await response.json();
+      alert("Upload Successfully! Pls Refresh");
         return responseData;
       } catch (error) {
         console.error('Error uploading photo: ' + error.message);
@@ -70,7 +71,6 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
           );
           
           console.log('Photos uploaded successfully:', responses);
-          alert("Upload Successfully! Pls Refresh");
           setUploadedResponses((prevResponses) => [...prevResponses, ...responses]);
           setSelectedFile([]); 
         } catch (error) {
